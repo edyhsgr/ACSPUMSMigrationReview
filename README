@@ -1,2 +1,7 @@
-See https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/app.R 
-And Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
+R CODE FOR ACS PUMS MIGRATION REVIEW - CALIFORNIA COUNTIES 
+- EDDIE HUNSINGER, OCTOBER 2019 (UPDATED JANUARY 2022) (CONTACT: edyhsgr.github.io; edyhsgr@gmailcom)
+DATA: US CENSUS BUREAU 2013 TO 2017 AMERICAN COMMUNITY SURVEY (ACS), PUBLIC USE MICRODATA SAMPLE (PUMS) FROM IPUMS-USA, UNIVERSITY OF MINNESOTA, ipums.org.
+
+The Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode by Eddie Hunsinger, August 2018 (updated July 2020) 
+Note: R's approx() function is used for missing data applied in the Rogers-Castro model. 
+Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
