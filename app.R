@@ -12,7 +12,8 @@
 ##R's approx() function is used for missing data applied in the Rogers-Castro model.
 ##
 ##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated January 2022). 
-##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
+##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
+##Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
 ##############################################################################################################################
 ##############################################################################################################################
 
