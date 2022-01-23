@@ -187,7 +187,7 @@ mainPanel(
 )
 
 #Data<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
-Data<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/master/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
+Data<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/master/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
 
 server<-function(input, output) {	
 	output$plots<-renderPlot({
@@ -303,7 +303,7 @@ childparam2tries<-array(runif(TRIES,0,1))
 ##STEP 4 INPUTS
 #MIN AND MAX OF LABOR FORCE AGES TO FIT OVER
 labormin<-17
-labormax<-49
+labormax<-45
 
 #STUDENT AGES TO EXCLUDE - CURRENTLY MUST BE ADJACENT AGES - TO EXCLUDE STUDENT PEAK FROM MODEL CAN SET AS JUST '0'
 if(input$ExcludeStudentAges=="YES") {studentages<-c(input$StudentAges[1],input$StudentAges[2])}
@@ -352,15 +352,18 @@ eldmax<-105
 
 #HEIGHT OF THE ELDERLY CURVE
 #TO EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-eldparam1tries<-array(runif(TRIES,0,.02)) #eldparam1tries<-array(runif(TRIES,0,1e-10))
+eldparam1tries<-array(runif(TRIES,0,.02)) 
+if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,0,1e-10))}
 
 #RATE OF DESCENT OF ELDERLY CURVE
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-eldparam2tries<-array(runif(TRIES,2.5,20)) #eldparam2tries<-array(runif(TRIES,0,1e-10))
+eldparam2tries<-array(runif(TRIES,2.5,20)) 
+if (input$ElderlyFunction=="NO") {eldparam2tries<-array(runif(TRIES,0,1e-10))}
 
 #POSITION OF THE ELDERLY CURVE ON THE AGE-AXIS
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '100' AND HIGH AS '+1e-10'
-eldparam3tries<-array(runif(TRIES,85,105)) #eldparam1tries<-array(runif(TRIES,100,100+1e-10))
+eldparam3tries<-array(runif(TRIES,85,105)) 
+if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,100,100+1e-10))}
 ###############
 
 ###############
