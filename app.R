@@ -5,6 +5,14 @@
 ##EDDIE HUNSINGER (AFFILIATION: CALIFORNIA DEPARTMENT OF FINANCE), OCTOBER 2019 (UPDATED JANUARY 2022)
 ##https://edyhsgr.github.io/eddieh/
 ##edyhsgr@gmail.com
+##
+##US Census Bureau 2013 to 2017 American Community Survey (ACS) Public Use Microdata Sample (PUMS) data from IPUMS-USA, University of Minnesota, www.ipums.org.
+##
+##Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
+##R's approx() function is used for missing data applied in the Rogers-Castro model.
+##
+##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated January 2022). 
+##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
 ##############################################################################################################################
 ##############################################################################################################################
 
