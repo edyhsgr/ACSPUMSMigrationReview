@@ -7,3 +7,5 @@ The Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#M
 Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. R's approx() function is used for missing data applied in the Rogers-Castro model. 
 
 Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
+
+This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 International License. More information: https://creativecommons.org/licenses/by-sa/3.0/? 
