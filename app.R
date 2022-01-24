@@ -21,7 +21,7 @@ library(shiny)
 
 ui<-fluidPage(
 
-	tags$h3("Draft ACS PUMS-Based Migration Data Viewer - California Counties - 2013 to 2017 American Community Survey Public Use Microdata Sample data"),
+	tags$h3("Draft ACS PUMS-Based Migration Data Viewer - California Counties - 2013 to 2017 American Community Survey Public Use Microdata Sample"),
 	p(""),
   
 hr(),
@@ -94,12 +94,13 @@ c(
 
  selectInput("Sex", "Sex",
 c(
+"Total"="0",
 "Male"="1",
 "Female"="2"
 ),
 ),
 
- selectInput("Hispanic", "Hispanic origin indicator",
+ selectInput("Hispanic", "Hispanic origin",
 c(
 "Total"="0",
 "Hispanic"="1",
@@ -120,11 +121,9 @@ c(
 ),
 ),
 
-numericInput("SampleSize", "Sampling size for Rogers-Castro migration model fitter", 
-		500, min = 100, max = 10000, step = 100,
+numericInput("SampleSize", "Sampling size for Rogers-Castro fitter (to refine the fit if helpful)", 
+		500, min = 500, max = 10000, step = 500,
 ),
-
-
 
  selectInput("InOrOut", "Fit In- or Out-movers in model?",
 c(
@@ -133,14 +132,14 @@ c(
 ),
 ),
 
- selectInput("ExcludeStudentAges", "Exclude student ages in model?",
+ selectInput("ExcludeStudentAges", "Exclude student age data points from model fit?",
 c(
 "Yes"="YES",
 "No"="NO"
 ),
 ),
 
- sliderInput("StudentAges", "If yes to student ages in model, student ages in model",
+ sliderInput("StudentAges", "If excluding student age data points from model fit, student ages",
                 min = 17, max = 23, value = c(18, 20),step=1
 ),
 
@@ -151,12 +150,31 @@ c(
 ),
 ),
 
- selectInput("ElderlyFunction", "Include elderly function in model?",
+ selectInput("ElderlyFunction", "Include Wilson's post-retirement function in model?",
 c(
 "No"="NO",
 "Yes"="YES"
 ),
 ),
+
+hr(),
+
+ sliderInput("ChildhoodAges", "Rogers-Castro childhood function data range (ages)",
+                min = 0, max = 19, value = c(0, 16),step=1
+),
+
+ sliderInput("LaborAges", "Rogers-Castro labor force function data range (ages)",
+                min = 15, max = 59, value = c(17, 44),step=1
+),
+
+ sliderInput("RetireAges", "Rogers-Castro retirement function data range (ages)",
+                min = 45, max = 79, value = c(50, 74),step=1
+),
+
+ sliderInput("PostRetireAges", "Wilson's post-retirement function data range (ages)",
+                min = 70, max = 109, value = c(75, 104),step=1
+),
+
 
 hr(),
 
@@ -166,7 +184,7 @@ tags$small(paste0(
 hr(),
 
 tags$small(paste0(        
-	"Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
+	"Some notes: Rogers-Castro migration model fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
 	R's approx() function is used for missing data applied in the Rogers-Castro model."
 	)),
 hr(),
@@ -175,7 +193,7 @@ tags$small(paste0(
 	"This interface was made with Shiny for R (shiny.rstudio.com). 
 	Eddie Hunsinger, September 2019 (updated January 2022). 
 	GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
-	Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode."
+	Rogers-Castro migration model fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode."
 	)),
 
 width=3
@@ -220,39 +238,59 @@ Data$MIGCOUNTY1[Data$MIGPUMA1==5303 & Data$MIGPLAC1==6] <- 53001 #Monterey
 Data$MIGCOUNTY1[Data$MIGPUMA1==5700 & Data$MIGPLAC1==6] <- 57001 #Nevada, Sierra
 Data$MIGCOUNTY1[Data$MIGPUMA1==10100 & Data$MIGPLAC1==6] <- 101001 #Sutter, Yuba
 
-if (input$Hispanic=="0") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex)}
-if (input$Hispanic=="1") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN!=0)}
-if (input$Hispanic=="2") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN==0)}
+if (input$Sex=="0") {
+	if (input$Hispanic=="0") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6)}
+	if (input$Hispanic=="1") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & HISPAN!=0)}
+	if (input$Hispanic=="2") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & HISPAN==0)}
+	
+	if (input$Hispanic=="0") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
 
-if (input$Hispanic=="0") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
-if (input$Hispanic=="1") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
-if (input$Hispanic=="2") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+if (input$Sex!="0") {
+	if (input$Hispanic=="0") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex)}
+	if (input$Hispanic=="1") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN!=0)}
+	if (input$Hispanic=="2") {PopData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN==0)}
+	
+	if (input$Hispanic=="0") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {InMigData<-subset(Data, COUNTYFIP==input$County & STATEFIP==6 & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
 
 agg_inmigdata<-aggregate(InMigData$SumOfPERWT, by=list(InMigData$AGE), FUN=sum)
 agg_inmigdata<-merge(agelist,agg_inmigdata,by="Group.1",all.x=TRUE)
 agg_popdata<-aggregate(PopData$SumOfPERWT, by=list(PopData$AGE), FUN=sum)
 agg_popdata<-merge(agelist,agg_popdata,by="Group.1",all.x=TRUE)
-if(input$ExcludeStudentAges=="YES") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="")}
-if(input$ExcludeStudentAges=="NO") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)))}
+if(input$ExcludeStudentAges=="YES") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
+if(input$ExcludeStudentAges=="NO") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
 lines(agg_inmigdata$x[0:MaxAge],type="l",col=2)
 
-if (input$Hispanic=="0") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
-if (input$Hispanic=="1") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
-if (input$Hispanic=="2") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+if (input$Sex=="0") {
+	if (input$Hispanic=="0") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
+
+if (input$Sex!="0") {
+	if (input$Hispanic=="0") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {OutMigData<-subset(Data, MIGCOUNTY1==input$County & MIGPLAC1==6 & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==22 | MIGRATE1D==23 | MIGRATE1D==24 | MIGRATE1D==25 | MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
 
 agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
 agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
 lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
 
-legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1)
+legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
 
 if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
 if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
 
-plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.5))
+plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.5),cex.axis=1.25,cex.lab=1.25)
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
 
-legend(MaxAge*.65, .48, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1)
+legend(MaxAge*.65, .48, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
 
 #####
 ##MIGRATION FITTER - FROM https://applieddemogtoolbox.github.io/Toolbox/#SPMMSRCode 
@@ -267,6 +305,10 @@ migprob<-migprob$y
 
 #NUMBER OF TRIES - USED FOR FITTING
 TRIES<-input$SampleSize
+if(TRIES>10000) {TRIES<-10000}
+
+#TO APPROXIMATELY EXCLUDE SOME FEATURES
+approxexclude<-c(0,1e-10)
 
 #PROPORTION TO ITER DISTRIBUTION BOUND SELECTION WITH
 BEST<-.015
@@ -289,81 +331,93 @@ level<-5
 ###############
 ##STEP 3 INPUTS
 #MIN AND MAX OF CHILDHOOD AGES TO FIT OVER
-childmin<-0
-childmax<-16
+childmin<-input$ChildhoodAges[1]
+childmax<-input$ChildhoodAges[2]
 
 #HEIGHT OF THE CHILDHOOD CURVE
-childparam1tries<-array(runif(TRIES,0,.1))
+childparam1range<-c(0,.1)
+childparam1tries<-array(runif(TRIES,childparam1range[1],childparam1range[2]))
 
 #RATE OF DESCENT OF THE CHILDHOOD CURVE
-childparam2tries<-array(runif(TRIES,0,1))
+childparam2range<-c(0,1)
+childparam2tries<-array(runif(TRIES,childparam2range[1],childparam2range[2]))
 ###############
 
 ###############
 ##STEP 4 INPUTS
 #MIN AND MAX OF LABOR FORCE AGES TO FIT OVER
-labormin<-17
-labormax<-45
+labormin<-input$LaborAges[1]
+labormax<-input$LaborAges[2]
 
 #STUDENT AGES TO EXCLUDE - CURRENTLY MUST BE ADJACENT AGES - TO EXCLUDE STUDENT PEAK FROM MODEL CAN SET AS JUST '0'
 if(input$ExcludeStudentAges=="YES") {studentages<-c(input$StudentAges[1],input$StudentAges[2])}
-if(input$ExcludeStudentAges=="NO") {studentages<-c(0)}
+if(input$ExcludeStudentAges=="NO") {studentages<-c(0,0)}
 
 #HEIGHT OF THE LABOR FORCE CURVE
-labparam1tries<-array(runif(TRIES,.04,.08))
+labparam1range<-c(.01,.1)
+labparam1tries<-array(runif(TRIES,labparam1range[1],labparam1range[2]))
 
 #RATE OF DESCENT OF THE LABOR FORCE CURVE
-labparam2tries<-array(runif(TRIES,.06,.10))
+labparam2range<-c(.05,.1)
+labparam2tries<-array(runif(TRIES,labparam2range[1],labparam2range[2]))
 
-#POSITION OF THE LABOR FORCE CURVE ON THE AGE-AXIS
-labparam3tries<-array(runif(TRIES,20,23))
+#POSITION OF THE LABOR FORCE CURVE ON THE AGE-AX­IS
+labparam3range<-c(20,25)
+labparam3tries<-array(runif(TRIES,labparam3range[1],labparam3range[2]))
 
 #RATE OF ASCENT OF THE LABOR FORCE CURVE
-labparam4tries<-array(runif(TRIES,.1,.5))
+labparam4range<-c(.1,.5)
+labparam4tries<-array(runif(TRIES,labparam4range[1],labparam4range[2]))
 ###############
 
 ###############
 ##STEP 5 INPUTS
 #MIN AND MAX OF RETIREMENT AGES TO FIT OVER
-retmin<-50
-retmax<-75
+retmin<-input$RetireAges[1]
+retmax<-input$RetireAges[2]
 
 #HEIGHT OF RETIREMENT CURVE
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-retparam1tries<-array(runif(TRIES,.0,.01)) 
-if (input$RetirementFunction=="NO") {retparam1tries<-array(runif(TRIES,0,1e-10))}
+ifelse(input$RetirementFunction=="NO",retparam1range<-c(approxexclude[1],approxexclude[2]),retparam1range<-c(.0,.01))
+retparam1tries<-array(runif(TRIES,retparam1range[1],retparam1range[2])) 
+if (input$RetirementFunction=="NO") {retparam1tries<-array(runif(TRIES,approxexclude[1],approxexclude[2]))}
 
 #RATE OF DESCENT OF RETIREMENT CURVE
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-retparam2tries<-array(runif(TRIES,2.5,10)) 
-if (input$RetirementFunction=="NO") {retparam2tries<-array(runif(TRIES,0,1e-10))}
+ifelse(input$RetirementFunction=="NO",retparam2range<-c(approxexclude[1],approxexclude[2]),retparam2range<-c(2.5,10))
+retparam2tries<-array(runif(TRIES,retparam2range[1],retparam2range[2])) 
+if (input$RetirementFunction=="NO") {retparam2tries<-array(runif(TRIES,retparam2range[1],retparam2range[2]))}
 
 #POSITION OF THE RETIREMENT CURVE ON THE AGE-AXIS
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '55' AND HIGH AS '55+1e-10'
-retparam3tries<-array(runif(TRIES,55,65)) 
-if (input$RetirementFunction=="NO") {retparam1tries<-array(runif(TRIES,55,55+1e-10))}
+ifelse(input$RetirementFunction=="NO",retparam3range<-c(0,0+1e-10),retparam3range<-c(55,65))
+retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2])) 
+if (input$RetirementFunction=="NO") {retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2]))}
 ###############
 
 ###############
 ##STEP 6 INPUTS
 #MIN AND MAX OF ELDERLY AGES TO FIT OVER
-eldmin<-75
-eldmax<-105
+eldmin<-input$PostRetireAges[1]
+eldmax<-input$PostRetireAges[2]
 
 #HEIGHT OF THE ELDERLY CURVE
 #TO EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-eldparam1tries<-array(runif(TRIES,0,.02)) 
-if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,0,1e-10))}
+ifelse(input$ElderlyFunction=="NO",eldparam1range<-c(approxexclude[1],approxexclude[2]),eldparam1range<-c(.0,.02))
+eldparam1tries<-array(runif(TRIES,eldparam1range[1],eldparam1range[2])) 
+if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,approxexclude[1],approxexclude[2]))}
 
 #RATE OF DESCENT OF ELDERLY CURVE
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-eldparam2tries<-array(runif(TRIES,2.5,20)) 
+ifelse(input$ElderlyFunction=="NO",eldparam2range<-c(approxexclude[1],approxexclude[2]),eldparam2range<-c(2.5,20))
+eldparam2tries<-array(runif(TRIES,eldparam2range[1],eldparam2range[2])) 
 if (input$ElderlyFunction=="NO") {eldparam2tries<-array(runif(TRIES,0,1e-10))}
 
 #POSITION OF THE ELDERLY CURVE ON THE AGE-AXIS
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '100' AND HIGH AS '+1e-10'
-eldparam3tries<-array(runif(TRIES,85,105)) 
-if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,100,100+1e-10))}
+ifelse(input$ElderlyFunction=="NO",eldparam3range<-c(approxexclude[1],approxexclude[2]),eldparam3range<-c(85,104))
+eldparam3tries<-array(runif(TRIES,eldparam3range[1],eldparam3range[2])) 
+if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,100,100+approxexclude[2]))}
 ###############
 
 ###############
@@ -592,9 +646,11 @@ squaredsumoffullmodelresiduals<-sum((step4-step1)^2) #squaredsumoffullmodelresid
 ##PLOT THE DATA
 ##############################
 
+options(scipen = 999)
+
 ##PLOT ACCUMULATED FIT
-if(input$ExcludeStudentAges=="YES") {plot(step1,xlab="Age",ylab="Migration Rate (proportional)",ylim=c(-.005,.035),pch=1,panel.first=c(abline(v=c(input$StudentAges[1],input$StudentAges[2]),col=1,lty=3)))}
-if(input$ExcludeStudentAges=="NO") {plot(step1,xlab="Age",ylab="Migration Rate (proportional)",ylim=c(-.005,.035))}
+if(input$ExcludeStudentAges=="YES") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25,pch=1,panel.first=c(abline(v=c(input$StudentAges[1],input$StudentAges[2]),col=1,lty=3)))}
+if(input$ExcludeStudentAges=="NO") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25)}
 lines(step6,col="black",lwd=3) #lines(step7,col="black",lwd=3)
 
 ##PLOT INDIVIDUAL STEP FITTING
@@ -608,13 +664,44 @@ lines(step2,col="red",lwd=2,lty=2)
 ##PLOT RESIDUALS
 lines(step6-step1,col="dark grey") #lines(step7-step1,col="dark grey")
 
-legend(MaxAge*.65,.035, 
-legend=c("Scaled data", "Full model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve", "Elderly curve", "Full model residuals"), 
+legend(MaxAge*.42,.035, 
+legend=c("Scaled data", "Full fitted model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve (flat if excluded)", "Wilson's post-retirement curve (flat if excluded)", "Full fitted model residuals"), 
 col=c("black", "black", "red", "blue", "green", "purple", "orange", "grey"), 
-lwd=c(1,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA), cex=1)
+lwd=c(1,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA), cex=1.25)
+
+plot.new()
+legend("left",
+	legend=c(paste(c("Number of smallest values averaged for level term (pre-set): ",level),collapse=""),"",
+
+		paste(c("Childhood function data range (ages): ",input$ChildhoodAges[1],":",input$ChildhoodAges[2]),collapse=""),
+		paste(c("Height of childhood curve: ",round(step3repeatpass$childparam1tries[1],3)," (from pre-set range: ",childparam1range[1],":",childparam1range[2],")"),collapse=""),
+		paste(c("Rate of descent of childhood curve: ",round(step3repeatpass$childparam2tries[1],3)," (from pre-set range: ",childparam2range[1],":",childparam2range[2],")"),collapse=""),"",
+
+		paste(c("Student ages (relevant if excluding them): ",input$StudentAges[1],":",input$StudentAges[2]),collapse=""),"",
+
+		paste(c("Labor force function data range (ages): ",input$LaborAges[1],":",input$LaborAges[2]),collapse=""),
+		paste(c("Height of labor force curve: ",round(step4repeatpass$labparam1tries[1],3)," (from pre-set range: ",labparam1range[1],":",labparam1range[2],")"),collapse=""),
+		paste(c("Rate of descent of labor force curve: ",round(step4repeatpass$labparam2tries[1],3)," (from pre-set range: ",labparam2range[1],":",labparam2range[2],")"),collapse=""),
+		paste(c("Position of labor force curve on age-axis: ",round(step4repeatpass$labparam3tries[1],1)," (from pre-set range: ",labparam3range[1],":",labparam3range[2],")"),collapse=""),
+		paste(c("Rate of ascent of labor force curve: ",round(step4repeatpass$labparam4tries[1],3)," (from pre-set range: ",labparam4range[1],":",labparam4range[2],")"),collapse=""),"",
+
+		paste(c("Retirement function data range (ages): ",input$RetireAges[1],":",input$RetireAges[2]),collapse=""),
+		paste(c("Height of retirement curve: ",round(step5repeatpass$retparam1tries[1],3)," (from pre-set range: ",round(retparam1range[1],3),":",round(retparam1range[2],3),")"),collapse=""),
+		paste(c("Rate of descent of retirement curve: ",round(step5repeatpass$retparam2tries[1],3)," (from pre-set range: ",round(retparam2range[1],3),":",round(retparam2range[2],3),")"),collapse=""),
+		paste(c("Position of retirement curve on age-axis: ",round(step5repeatpass$retparam3tries[1],1)," (from pre-set range: ",round(retparam3range[1],3),":",round(retparam3range[2],3),")"),collapse=""),"",
+
+		paste(c("Post-retirement function data range (ages): ",input$PostRetireAges[1],":",input$PostRetireAges[2]),collapse=""),
+		paste(c("Height of post-retirement curve: ",round(step6repeatpass$eldparam1tries[1],3)," (from pre-set range: ",round(eldparam1range[1],3),":",round(eldparam1range[2],3),")"),collapse=""),
+		paste(c("Rate of descent of post-retirement curve: ",round(step6repeatpass$eldparam2tries[1],3)," (from pre-set range: ",round(eldparam2range[1],3),":",round(eldparam2range[2],3),")"),collapse=""),
+		paste(c("Position of post-retirement curve on age-axis: ",round(step6repeatpass$eldparam3tries[1],1)," (from pre-set range: ",round(eldparam3range[1],3),":",round(eldparam3range[2],3),")"),collapse=""),"",
+
+		paste(c("Sum of squared residuals: ",round(squaredsumoffullmodelresiduals,6)),collapse="")
+		),
+	cex=1.25,bty="n")
+
 }
 
-},height=1100,width=1100)
+},height=1250,width=1250)
 	
 }
 
