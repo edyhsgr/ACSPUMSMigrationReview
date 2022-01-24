@@ -161,7 +161,7 @@ c(
 ),
 ),
 
-numericInput("SampleSize", "Sampling size for Rogers-Castro fitter (to refine the fit if helpful)", 
+numericInput("SampleSize", "Sampling size for Rogers-Castro fitter (increase to refine the fit if helpful)", 
 		500, min = 500, max = 10000, step = 500,
 ),
 
@@ -402,7 +402,7 @@ labparam2range<-c(.05,.1)
 labparam2tries<-array(runif(TRIES,labparam2range[1],labparam2range[2]))
 
 #POSITION OF THE LABOR FORCE CURVE ON THE AGE-AX­IS
-labparam3range<-c(20,25)
+labparam3range<-c(20,24)
 labparam3tries<-array(runif(TRIES,labparam3range[1],labparam3range[2]))
 
 #RATE OF ASCENT OF THE LABOR FORCE CURVE
@@ -457,7 +457,7 @@ if (input$ElderlyFunction=="NO") {eldparam2tries<-array(runif(TRIES,0,1e-10))}
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '100' AND HIGH AS '+1e-10'
 ifelse(input$ElderlyFunction=="NO",eldparam3range<-c(approxexclude[1],approxexclude[2]),eldparam3range<-c(85,104))
 eldparam3tries<-array(runif(TRIES,eldparam3range[1],eldparam3range[2])) 
-if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,100,100+approxexclude[2]))}
+if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,eldparam3range[1],eldparam3range[2]))}
 ###############
 
 ###############
