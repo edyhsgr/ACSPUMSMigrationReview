@@ -14,6 +14,46 @@
 ##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated January 2022). 
 ##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
 ##Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
+##
+##IF YOU WOULD LIKE TO USE, SHARE OR REPRODUCE THIS CODE, BE SURE TO CITE THE SOURCE
+##
+##EXAMPLE DATA IS LINKED, SO YOU SHOULD BE ABLE TO SIMPLY COPY ALL AND PASTE INTO R
+##
+##THERE IS NO WARRANTY FOR THIS CODE
+##THIS CODE HAS NOT BEEN PEER-REVIEWED OR CAREFULLY TESTED - PLEASE LET ME KNOW IF YOU FIND ANY PROBLEMS (edyhsgr@gmail.com)
+##
+##FOR EACH OF THE STEP 4 THROUGH 7 (SEE 'FOR MORE INFO' BELOW) PARAMETERS, IT GIVES A BEST FIT BASED ON SAMPLING FROM RECURSIVELY SMALLER UNIFORM DISTRIBUTIONS 
+##THIS IS JUST A REASONED DIY SOLUTION - PLEASE LET ME KNOW (edyhsgr@gmail.com) IF YOU KNOW OF AN EXISTING REFERENCE/EXAMPLE/NAME/CRITIQUE/ETC FOR IT OR SIMILAR - AND ANY THOUGHTS ARE WELCOME
+##
+##THE STARTING PARAMETER DISTRIBUTIONS FOR THIS EXAMPLE ARE AROUND EXISTING INFO FROM ROGERS-CASTRO AND WILSON, AND NOT CAREFULLY FIGURED OR CALIBRATED
+##PLEASE FEEL ENCOURAGED TO TEST OUT DIFFERENT SETTINGS, OF COURSE
+##
+##IF YOU GET A POOR FIT FOR SOME DATA, ONE ITEM TO REVIEW IS COMPARISON OF THE PARAMETER ESTIMATES TO THE STARTING PARAMETER DISTRIBUTIONS (MAY NEED TO SIMPLY EXPAND OR CHANGE THE BOUNDS OF AN INPUT)
+##TO INCREASE THE PRECISION OF THE FIT (BASED ON DIFFERENCES BETWEEN FINAL FITS), TRY INCREASING 'TRIES' INPUT
+##
+##COPIES WITH SOME APPLICATION OF AND COMPARISON TO R's lm() AND nls() FUNCTIONS, AND TO ~PLAIN MONTE CARLO, 
+##ARE AVAILABLE AT https://github.com/AppliedDemogToolbox/Hunsinger_MMSRCode/tree/master/FittingComparisons
+##
+##FOR MORE INFO ON THE MMS MODEL, SEE: 
+##-Wilson, T. (2010). “Model migration schedules incorporating student migration peaks.” Demographic Research, 23(8): 191–222.
+##AVAILABLE ONLINE: https://www.demographic-research.org/Volumes/Vol23/8/default.htm
+##-Wilson, T. (2020). “Modelling Age Patterns of Internal Migration at the Highest Ages.” Spatial Demography, 8.
+##AVAILABLE ONLINE: rdcu.be/b5baq
+##
+##RELATED EXCEL WORKBOOK BY TOM WILSON: https://figshare.com/articles/Model_Migration_Schedule_fitting_example/12415475
+##
+##GREAT RESOURCE ON THE ROGERS-CASTRO MODEL: Rogers A & Castro LJ (1981). Model Migration Schedules. IIASA Research Report. IIASA, Laxenburg, Austria: RR-81-030
+##AVAILABLE ONLINE: http://pure.iiasa.ac.at/id/eprint/1543/
+##
+##R PACKAGE (DEVELOPED MONTHS BEFORE THIS CODE) THAT ALSO USES UNIFORM DISTRIBUTIONS FOR THE PARAMETERS' STARTING POINTS:
+##migraR by J. Sebastian Ruiz-Santacruz and Jackson Garcés Hernández
+##AVAILABLE ONLINE: https://github.com/elflacosebas/migraR
+##
+##ONE MORE ALTERNATIVE ROGERS-CASTRO FITTER - SUPPORTED ON CRAN, RELEASED IN 2021 
+##bayesrc by Jessie Yeung, Monica Alexander, Tim Riffe
+##AVAILABLE ONLINE: https://cran.r-project.org/web/packages/rcbayes/index.html
+##
+##This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 International License. More information: https://creativecommons.org/licenses/by-sa/3.0/? 
 ##############################################################################################################################
 ##############################################################################################################################
 
