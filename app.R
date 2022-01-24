@@ -737,7 +737,7 @@ legend("left",
 
 		paste(c("Sum of squared residuals (not adjusted for student-age management): ",round(squaredsumoffullmodelresiduals,6)),collapse="")
 		),
-	cex=1.25,bty="n")
+	cex=1.25,bty="n") 
 
 }
 
