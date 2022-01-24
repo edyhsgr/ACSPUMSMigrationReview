@@ -735,7 +735,7 @@ legend("left",
 		paste(c("Rate of descent of post-retirement curve: ",round(step6repeatpass$eldparam2tries[1],3)," (from pre-set range: ",round(eldparam2range[1],3),":",round(eldparam2range[2],3),")"),collapse=""),
 		paste(c("Position of post-retirement curve on age-axis: ",round(step6repeatpass$eldparam3tries[1],1)," (from pre-set range: ",round(eldparam3range[1],3),":",round(eldparam3range[2],3),")"),collapse=""),"",
 
-		paste(c("Sum of squared residuals: ",round(squaredsumoffullmodelresiduals,6)),collapse="")
+		paste(c("Sum of squared residuals (not adjusted for student-age management): ",round(squaredsumoffullmodelresiduals,6)),collapse="")
 		),
 	cex=1.25,bty="n")
 
