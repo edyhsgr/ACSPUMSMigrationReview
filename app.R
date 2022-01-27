@@ -71,7 +71,7 @@ sidebarPanel(
 
 radioButtons("radio","",c("US states" = 1, "California counties" = 2),selected = 1),
 
- selectInput("State", "If US states, state",
+ selectInput("State", "If US states, state",selected = 1,
 c(
 "Alabama"="1",
 "Alaska"="2",
@@ -311,6 +311,8 @@ par(mfrow=c(2,2))
 	
 ##############################################################################################################################
 ##############################################################################################################################
+
+options(scipen = 999)
 
 MaxAge<-89
 agelist<-data.frame(0:110)
@@ -811,8 +813,6 @@ squaredsumoffullmodelresiduals<-sum((step4-step1)^2) #squaredsumoffullmodelresid
 ##############################
 ##PLOT THE DATA
 ##############################
-
-options(scipen = 999)
 
 ##PLOT ACCUMULATED FIT
 if(input$ExcludeStudentAges=="YES") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25,pch=1,panel.first=c(abline(v=c(input$StudentAges[1],input$StudentAges[2]),col=1,lty=3)))}
