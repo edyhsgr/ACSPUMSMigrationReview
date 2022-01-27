@@ -102,26 +102,26 @@ c(
 "Montana"="30",
 "Nebraska"="31",
 "Nevada"="32",
-"New_Hampshire"="33",
-"New_Jersey"="34",
-"New_Mexico"="35",
-"New_York"="36",
-"North_Carolina"="37",
-"North_Dakota"="38",
+"New Hampshire"="33",
+"New Jersey"="34",
+"New Mexico"="35",
+"New York"="36",
+"North Carolina"="37",
+"North Dakota"="38",
 "Ohio"="39",
 "Oklahoma"="40",
 "Oregon"="41",
 "Pennsylvania"="42",
-"Rhode_Island"="44",
-"South_Carolina"="45", 		
-"South_Dakota"="46",
+"Rhode Island"="44",
+"South Carolina"="45", 		
+"South Dakota"="46",
 "Tennessee"="47",
 "Texas"="48",
 "Utah"="49",
 "Vermont"="50",
 "Virginia"="51",
 "Washington"="53",
-"West_Virginia"="54",
+"West Virginia"="54",
 "Wisconsin"="55",
 "Wyoming"="56"
 ),
@@ -808,7 +808,6 @@ step6<-step5+step6best
 ##REVIEW FIT
 #SQUARED SUM OF RESIDUALS FOR ENTIRE MODEL
 squaredsumoffullmodelresiduals<-sum((step4-step1)^2) #squaredsumoffullmodelresiduals<-sum((step7-step1)^2)
-
 
 ##############################
 ##PLOT THE DATA
