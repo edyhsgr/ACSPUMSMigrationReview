@@ -6,7 +6,7 @@ The Rogers-Castro fitting process used, references, and more information: https:
 
 Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
 R's approx() function is used for missing data applied in the Rogers-Castro model. 
-The file with data for US States (not including counties) (38MB) is too large to post here, but available at: 
+The file with data for US States (not including counties) (38MB) is too large to post here, but posted at: 
 https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_States.csv
 
 Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
