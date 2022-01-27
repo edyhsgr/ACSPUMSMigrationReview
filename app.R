@@ -1,6 +1,6 @@
 ##############################################################################################################################
 ##############################################################################################################################
-##R CODE FOR ACS PUMS MIGRATION REVIEW - CALIFORNIA COUNTIES
+##R CODE FOR ACS PUMS MIGRATION REVIEW - US STATES AND CALIFORNIA COUNTIES
 ##
 ##EDDIE HUNSINGER (AFFILIATION: CALIFORNIA DEPARTMENT OF FINANCE), OCTOBER 2019 (UPDATED JANUARY 2022)
 ##https://edyhsgr.github.io/eddieh/
@@ -61,7 +61,7 @@ library(shiny)
 
 ui<-fluidPage(
 
-	tags$h3("ACS PUMS-Based Migration Data Viewer - California Counties - 2013 to 2017 American Community Survey Public Use Microdata Sample"),
+	tags$h3("ACS PUMS-Based Migration Data Viewer - US States and California Counties - 2013 to 2017 American Community Survey Public Use Microdata Sample"),
 	p(""),
   
 hr(),
@@ -69,7 +69,65 @@ hr(),
 sidebarLayout(
 sidebarPanel(
 
- selectInput("County", "County",
+radioButtons("radio","",c("US states" = 1, "California counties" = 2),selected = 1),
+
+ selectInput("State", "If US states, state",
+c(
+"Alabama"="1",
+"Alaska"="2",
+"Arizona"="4",
+"Arkansas"="5",
+"California"="6",
+"Colorado"="8",
+"Connecticut"="9",
+"Delaware"="10",
+"Washington D.C."="11",
+"Florida"="12",
+"Georgia"="13",
+"Hawaii"="15",
+"Idaho"="16",
+"Illinois"="17",
+"Indiana"="18",
+"Iowa"="19",
+"Kansas"="20",
+"Kentucky"="21",
+"Louisiana"="22",
+"Maine"="23",
+"Maryland"="24",
+"Massachusetts"="25",
+"Michigan"="26",
+"Minnesota"="27",
+"Mississippi"="28",
+"Missouri"="29",
+"Montana"="30",
+"Nebraska"="31",
+"Nevada"="32",
+"New_Hampshire"="33",
+"New_Jersey"="34",
+"New_Mexico"="35",
+"New_York"="36",
+"North_Carolina"="37",
+"North_Dakota"="38",
+"Ohio"="39",
+"Oklahoma"="40",
+"Oregon"="41",
+"Pennsylvania"="42",
+"Rhode_Island"="44",
+"South_Carolina"="45", 		
+"South_Dakota"="46",
+"Tennessee"="47",
+"Texas"="48",
+"Utah"="49",
+"Vermont"="50",
+"Virginia"="51",
+"Washington"="53",
+"West_Virginia"="54",
+"Wisconsin"="55",
+"Wyoming"="56"
+),
+),
+
+ selectInput("County", "If California counties, county",
 c(
 "Alameda"="1",
 "Alpine, Amador, Calaveras, Inyo, Mariposa, Mono, Tuolumne"="3001", #"3",
@@ -233,7 +291,7 @@ tags$small(paste0(
 	"This interface was made with Shiny for R (shiny.rstudio.com). 
 	Eddie Hunsinger, September 2019 (updated January 2022). 
 	GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
-	Rogers-Castro migration model fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode."
+	Rogers-Castro migration model fitting process used, references, and more information: https://applieddemogtoolbox.github.io/#MMSRCode."
 	)),
 
 width=3
@@ -244,8 +302,8 @@ mainPanel(
 ))
 )
 
-#Data<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
-Data<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/master/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
+DataStates<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_States.csv",header=TRUE,sep=","))
+DataCACounties<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/master/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
 
 server<-function(input, output) {	
 	output$plots<-renderPlot({
@@ -257,6 +315,73 @@ par(mfrow=c(2,2))
 MaxAge<-89
 agelist<-data.frame(0:110)
 names(agelist)<-"Group.1"
+
+##########
+##IF US STATES
+##########
+if(input$radio==1) {
+Data<-DataStates
+
+if (input$Sex=="0") {
+	if (input$Hispanic=="0") {PopData<-subset(Data, STATEFIP==input$State)}
+	if (input$Hispanic=="1") {PopData<-subset(Data, STATEFIP==input$State & HISPAN!=0)}
+	if (input$Hispanic=="2") {PopData<-subset(Data, STATEFIP==input$State & HISPAN==0)}
+	
+	if (input$Hispanic=="0") {InMigData<-subset(Data, STATEFIP==input$State & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {InMigData<-subset(Data, STATEFIP==input$State & HISPAN!=0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {InMigData<-subset(Data, STATEFIP==input$State & HISPAN==0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
+
+if (input$Sex!="0") {
+	if (input$Hispanic=="0") {PopData<-subset(Data, STATEFIP==input$State & SEX==input$Sex)}
+	if (input$Hispanic=="1") {PopData<-subset(Data, STATEFIP==input$State & SEX==input$Sex & HISPAN!=0)}
+	if (input$Hispanic=="2") {PopData<-subset(Data, STATEFIP==input$State & SEX==input$Sex & HISPAN==0)}
+	
+	if (input$Hispanic=="0") {InMigData<-subset(Data, STATEFIP==input$State & SEX==input$Sex & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {InMigData<-subset(Data, STATEFIP==input$State & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {InMigData<-subset(Data, STATEFIP==input$State & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
+
+agg_inmigdata<-aggregate(InMigData$SumOfPERWT, by=list(InMigData$AGE), FUN=sum)
+agg_inmigdata<-merge(agelist,agg_inmigdata,by="Group.1",all.x=TRUE)
+agg_popdata<-aggregate(PopData$SumOfPERWT, by=list(PopData$AGE), FUN=sum)
+agg_popdata<-merge(agelist,agg_popdata,by="Group.1",all.x=TRUE)
+if(input$ExcludeStudentAges=="YES") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
+if(input$ExcludeStudentAges=="NO") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
+lines(agg_inmigdata$x[0:MaxAge],type="l",col=2)
+
+if (input$Sex=="0") {
+	if (input$Hispanic=="0") {OutMigData<-subset(Data, MIGPLAC1==input$State & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {OutMigData<-subset(Data, MIGPLAC1==input$State & HISPAN!=0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {OutMigData<-subset(Data, MIGPLAC1==input$State & HISPAN==0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
+
+if (input$Sex!="0") {
+	if (input$Hispanic=="0") {OutMigData<-subset(Data, MIGPLAC1==input$State & SEX==input$Sex & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="1") {OutMigData<-subset(Data, MIGPLAC1==input$State & SEX==input$Sex & HISPAN!=0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	if (input$Hispanic=="2") {OutMigData<-subset(Data, MIGPLAC1==input$State & SEX==input$Sex & HISPAN==0 & (MIGRATE1D==30 | MIGRATE1D==31 | MIGRATE1D==32 | MIGRATE1D==40))}
+	}
+
+agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
+agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
+lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
+
+legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
+
+if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
+if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
+
+plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.25),cex.axis=1.25,cex.lab=1.25)
+lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
+
+legend(MaxAge*.65, .24, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
+}
+
+##########
+##IF CA COUNTIES
+##########
+if(input$radio==2) {
+Data<-DataCACounties
 
 Data$COUNTYFIP[Data$PUMA==300 & Data$STATEFIP==6] <- 3001 #Alpine, Amador, Calaveras, Inyo, Mariposa, Mono, Tuolumne
 Data$COUNTYFIP[Data$PUMA==1100 & Data$STATEFIP==6] <- 11001 #Colusa, Glenn, Tehama, Trinity
@@ -331,6 +456,7 @@ plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age"
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
 
 legend(MaxAge*.65, .48, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
+}
 
 #####
 ##MIGRATION FITTER - FROM https://applieddemogtoolbox.github.io/Toolbox/#SPMMSRCode 
@@ -345,7 +471,7 @@ migprob<-migprob$y
 
 #NUMBER OF TRIES - USED FOR FITTING
 TRIES<-input$SampleSize
-if(TRIES>10000) {TRIES<-10000}
+if(TRIES>5000) {TRIES<-5000}
 
 #TO APPROXIMATELY EXCLUDE SOME FEATURES
 approxexclude<-c(0,1e-10)
@@ -398,7 +524,7 @@ labparam1range<-c(.01,.1)
 labparam1tries<-array(runif(TRIES,labparam1range[1],labparam1range[2]))
 
 #RATE OF DESCENT OF THE LABOR FORCE CURVE
-labparam2range<-c(.05,.1)
+labparam2range<-c(.05,.15)
 labparam2tries<-array(runif(TRIES,labparam2range[1],labparam2range[2]))
 
 #POSITION OF THE LABOR FORCE CURVE ON THE AGE-AX­IS
@@ -424,13 +550,13 @@ if (input$RetirementFunction=="NO") {retparam1tries<-array(runif(TRIES,approxexc
 
 #RATE OF DESCENT OF RETIREMENT CURVE
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-ifelse(input$RetirementFunction=="NO",retparam2range<-c(approxexclude[1],approxexclude[2]),retparam2range<-c(2.5,10))
+ifelse(input$RetirementFunction=="NO",retparam2range<-c(approxexclude[1],approxexclude[2]),retparam2range<-c(5,12.5))
 retparam2tries<-array(runif(TRIES,retparam2range[1],retparam2range[2])) 
 if (input$RetirementFunction=="NO") {retparam2tries<-array(runif(TRIES,retparam2range[1],retparam2range[2]))}
 
 #POSITION OF THE RETIREMENT CURVE ON THE AGE-AXIS
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '55' AND HIGH AS '55+1e-10'
-ifelse(input$RetirementFunction=="NO",retparam3range<-c(0,0+1e-10),retparam3range<-c(55,65))
+ifelse(input$RetirementFunction=="NO",retparam3range<-c(0,0+1e-10),retparam3range<-c(55,75))
 retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2])) 
 if (input$RetirementFunction=="NO") {retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2]))}
 ###############
@@ -449,7 +575,7 @@ if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,approxexclud
 
 #RATE OF DESCENT OF ELDERLY CURVE
 #TO APPROXIMATELY EXCLUDE ELDERLY CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
-ifelse(input$ElderlyFunction=="NO",eldparam2range<-c(approxexclude[1],approxexclude[2]),eldparam2range<-c(2.5,20))
+ifelse(input$ElderlyFunction=="NO",eldparam2range<-c(approxexclude[1],approxexclude[2]),eldparam2range<-c(2.5,25))
 eldparam2tries<-array(runif(TRIES,eldparam2range[1],eldparam2range[2])) 
 if (input$ElderlyFunction=="NO") {eldparam2tries<-array(runif(TRIES,0,1e-10))}
 
