@@ -243,15 +243,15 @@ c(
 
  selectInput("RetirementFunction", "Include retirement function in model?",
 c(
-"No"="NO",
-"Yes"="YES"
+"Yes"="YES",
+"No"="NO"
 ),
 ),
 
  selectInput("ElderlyFunction", "Include Wilson's post-retirement function in model?",
 c(
-"No"="NO",
-"Yes"="YES"
+"Yes"="YES",
+"No"="NO"
 ),
 ),
 
