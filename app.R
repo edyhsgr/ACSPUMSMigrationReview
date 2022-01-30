@@ -243,15 +243,15 @@ c(
 
  selectInput("RetirementFunction", "Include retirement function in model?",
 c(
-"Yes"="YES",
-"No"="NO"
+"No"="NO",
+"Yes"="YES"
 ),
 ),
 
  selectInput("ElderlyFunction", "Include Wilson's post-retirement function in model?",
 c(
-"Yes"="YES",
-"No"="NO"
+"No"="NO",
+"Yes"="YES"
 ),
 ),
 
@@ -303,7 +303,7 @@ mainPanel(
 )
 
 DataStates<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_States.csv",header=TRUE,sep=","))
-DataCACounties<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/master/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
+DataCACounties<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
 
 server<-function(input, output) {	
 	output$plots<-renderPlot({
@@ -558,7 +558,7 @@ if (input$RetirementFunction=="NO") {retparam2tries<-array(runif(TRIES,retparam2
 
 #POSITION OF THE RETIREMENT CURVE ON THE AGE-AXIS
 #TO APPROXIMATELY EXCLUDE RETIREMENT CURVE FROM MODEL CAN SET LOW AS '55' AND HIGH AS '55+1e-10'
-ifelse(input$RetirementFunction=="NO",retparam3range<-c(0,0+1e-10),retparam3range<-c(55,75))
+ifelse(input$RetirementFunction=="NO",retparam3range<-c(0,0+1e-10),retparam3range<-c(55,74))
 retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2])) 
 if (input$RetirementFunction=="NO") {retparam3tries<-array(runif(TRIES,retparam3range[1],retparam3range[2]))}
 ###############
