@@ -2,7 +2,7 @@
 ##############################################################################################################################
 ##R CODE FOR ACS PUMS MIGRATION REVIEW - US STATES AND CALIFORNIA COUNTIES
 ##
-##EDDIE HUNSINGER (AFFILIATION: CALIFORNIA DEPARTMENT OF FINANCE), OCTOBER 2019 (UPDATED JANUARY 2022)
+##EDDIE HUNSINGER, OCTOBER 2019 (UPDATED JANUARY 2022)
 ##https://edyhsgr.github.io/eddieh/
 ##edyhsgr@gmail.com
 ##
