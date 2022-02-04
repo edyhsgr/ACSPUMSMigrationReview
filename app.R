@@ -289,11 +289,14 @@ hr(),
 
 tags$small(paste0(        
 	"This interface was made with Shiny for R (shiny.rstudio.com). 
-	Eddie Hunsinger, September 2019 (updated January 2022). 
-	GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
-	Rogers-Castro migration model fitting process used, references, and more information: https://applieddemogtoolbox.github.io/#MMSRCode."
-	)),
+	Eddie Hunsinger, September 2019 (updated February 2022).")),
 
+	tags$a(href="https://github.com/edyhsgr/ACSPUMSMigrationReview",
+		"GitHub repository."),
+
+	tags$a(href="https://applieddemogtoolbox.github.io/#MMSRCode",
+		"Rogers-Castro migration model fitting process used, references, and more information."),
+ 
 width=3
 ),
 
