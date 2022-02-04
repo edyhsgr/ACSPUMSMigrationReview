@@ -591,8 +591,8 @@ if (input$ElderlyFunction=="NO") {eldparam1tries<-array(runif(TRIES,eldparam3ran
 ###############
 ###STEP 7 INPUTS
 #MIN AND MAX OF STUDENT AGES TO FIT OVER - STUDENT AGES SET ABOVE UNDER STEP 4 INPUTS
-#stumin<-min(studentages)
-#stumax<-max(studentages+1)
+stumin<-min(studentages)
+stumax<-max(studentages+1)
 #
 ##HEIGHT OF STUDENT CURVE
 #TO EXCLUDE STUDENT CURVE FROM MODEL CAN SET LOW AS '0' AND HIGH AS '1e-10'
@@ -701,8 +701,8 @@ step4repeatpass$labparam4tries[1]
 step4repeatpass$sumlabresidtries[1]
 ITER
 step4best<-array(step1-step3,dim=c(length(step1)))
-#step4best[1:SIZE]<-step4repeatpass$labparam1tries[1]*exp(-step4repeatpass$labparam2tries[1]*(meanages[]-step4repeatpass$labparam3tries[1])-exp(-step4repeatpass$labparam4tries[1]*(meanages[]-step4repeatpass$labparam3tries[1])))
-step4best[1:SIZE]<-round(step4repeatpass$labparam1tries[1],3)*exp(round(-step4repeatpass$labparam2tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))-exp(round(-step4repeatpass$labparam4tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))))
+step4best[1:SIZE]<-step4repeatpass$labparam1tries[1]*exp(-step4repeatpass$labparam2tries[1]*(meanages[]-step4repeatpass$labparam3tries[1])-exp(-step4repeatpass$labparam4tries[1]*(meanages[]-step4repeatpass$labparam3tries[1])))
+#step4best[1:SIZE]<-round(step4repeatpass$labparam1tries[1],3)*exp(round(-step4repeatpass$labparam2tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))-exp(round(-step4repeatpass$labparam4tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))))
 step4<-step3+step4best
 
 ##STEP 5 FIT - SELECT BEST PERCENT PARAMETER VALUES OF TRIES BASED ON INPUT DISTRIBUTIONS, THEN REPEAT TRIES WITH THE UNIFORM BOUNDS OF BEST PERCENT UNTIL CONVERGENCE   
@@ -788,7 +788,7 @@ retparamtries<-data.frame(sumretresidtries=sumretresidtries,retparam1tries=retpa
 eldparam1tries<-runif(TRIES,min(eldparam1tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]),max(eldparam1tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]))
 eldparam2tries<-runif(TRIES,min(eldparam2tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]),max(eldparam2tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]))
 eldparam3tries<-runif(TRIES,min(eldparam3tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]),max(eldparam3tries[match(head(sort(sumretresidtries),TRIES*BEST),sumretresidtries)]))
-eldparamtries<-data.frame(sumretresidtries=sumretresidtries,eldparam1tries=eldparam1tries,eldparam2tries=eldparam2tries,eldparam3tries=eldparam3tries)
+eldparamtries<-data.frame(sumeldresidtries=sumretresidtries,eldparam1tries=eldparam1tries,eldparam2tries=eldparam2tries,eldparam3tries=eldparam3tries)
 return(c(step5tries,retparamtries,eldparamtries))
 }
 step5repeatpass<-step5triesfit(retparam1tries,retparam2tries,retparam3tries,eldparam1tries,eldparam2tries,eldparam3tries)
@@ -807,7 +807,7 @@ step5repeatpass$sumretresidtries[1]
 step5repeatpass$eldparam1tries[1]
 step5repeatpass$eldparam2tries[1]
 step5repeatpass$eldparam3tries[1]
-step5repeatpass$sumretresidtries[1]
+step5repeatpass$sumeldresidtries[1]
 step6repeatpass<-step5repeatpass
 ITER
 step5best<-array(step1-step4,dim=c(length(step1)))
@@ -817,6 +817,9 @@ step6best<-array(step1-step5,dim=c(length(step1)))
 step6best[1:SIZE]<-step5repeatpass$eldparam1tries[1]*exp(-((meanages[]-step5repeatpass$eldparam3tries[1])/step5repeatpass$eldparam2tries[1])*((meanages[]-step5repeatpass$eldparam3tries[1])/step5repeatpass$eldparam2tries[1]))
 step6<-step5+step6best
 }
+
+step7<-step6
+for (j in 1:length(meanages)) {if((meanages[j]>=stumin)&(meanages[j]<=stumax-1)) {step7[j]<-step1[j]}}
 
 ###STEP 7 FIT - SELECT BEST PERCENT PARAMETER VALUES OF TRIES BASED ON INPUT DISTRIBUTIONS, THEN REPEAT TRIES WITH THE UNIFORM BOUNDS OF BEST PERCENT UNTIL CONVERGENCE  
 #step7triesfit<-function(stuparam1tries,stuparam2tries,stuparam3tries,stuparam4tries){
@@ -855,7 +858,7 @@ step6<-step5+step6best
 
 ##REVIEW FIT
 #SQUARED SUM OF RESIDUALS FOR ENTIRE MODEL
-squaredsumoffullmodelresiduals<-sum((step4-step1)^2) #squaredsumoffullmodelresiduals<-sum((step7-step1)^2)
+squaredsumoffullmodelresiduals<-sum((step7-step1)^2) #squaredsumoffullmodelresiduals<-sum((step7-step1)^2)
 
 ##############################
 ##PLOT THE DATA
@@ -867,7 +870,7 @@ if(input$ExcludeStudentAges=="NO") {plot(step1,xlab="Age",ylab="Migration Rate (
 lines(step6,col="black",lwd=3) #lines(step7,col="black",lwd=3)
 
 ##PLOT INDIVIDUAL STEP FITTING
-#lines(step7-step6,col="yellow",lwd=2,lty=2)
+lines(step7-step6,col="grey",lwd=2,lty=2)
 lines(step6-step5,col="orange",lwd=2,lty=2)
 lines(step5-step4,col="purple",lwd=2,lty=2)
 lines(step4-step3,col="green",lwd=2,lty=2)
@@ -875,12 +878,12 @@ lines(step3-step2,col="blue",lwd=2,lty=2)
 lines(step2,col="red",lwd=2,lty=2)
 
 ##PLOT RESIDUALS
-lines(step6-step1,col="dark grey") #lines(step7-step1,col="dark grey")
+lines(step7-step1,col="dark grey") #lines(step7-step1,col="dark grey")
 
 legend(MaxAge*.42,.035, 
-legend=c("Scaled data", "Full fitted model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve (flat if excluded)", "Wilson's post-retirement curve (flat if excluded)", "Full fitted model residuals"), 
-col=c("black", "black", "red", "blue", "green", "purple", "orange", "grey"), 
-lwd=c(1,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA), cex=1.25)
+legend=c("Scaled data", "Full fitted model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve (flat if excluded)", "Wilson's post-retirement curve (flat if excluded)", "Student adjustment (flat if no adjustment)", "Full fitted model residuals"), 
+col=c("black", "black", "red", "blue", "green", "purple", "orange", "grey", "grey"), 
+lwd=c(1,2,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA,NA), cex=1.25)
 
 plot.new()
 legend("left",
@@ -906,9 +909,9 @@ legend("left",
 		paste(c("Post-retirement function data range (ages): ",input$PostRetireAges[1],":",input$PostRetireAges[2]),collapse=""),
 		paste(c("Height of post-retirement curve: ",round(step6repeatpass$eldparam1tries[1],3)," (from pre-set range: ",round(eldparam1range[1],3),":",round(eldparam1range[2],3),")"),collapse=""),
 		paste(c("Rate of descent of post-retirement curve: ",round(step6repeatpass$eldparam2tries[1],3)," (from pre-set range: ",round(eldparam2range[1],3),":",round(eldparam2range[2],3),")"),collapse=""),
-		paste(c("Position of post-retirement curve on age-axis: ",round(step6repeatpass$eldparam3tries[1],1)," (from pre-set range: ",round(eldparam3range[1],3),":",round(eldparam3range[2],3),")"),collapse="")
+		paste(c("Position of post-retirement curve on age-axis: ",round(step6repeatpass$eldparam3tries[1],1)," (from pre-set range: ",round(eldparam3range[1],3),":",round(eldparam3range[2],3),")"),collapse=""),"",
 
-		#paste(c("Sum of squared residuals (not adjusted for student-age management): ",round(squaredsumoffullmodelresiduals,6)),collapse="")
+		paste(c("Sum of squared residuals: ",round(squaredsumoffullmodelresiduals,6)),collapse="")
 		),
 	cex=1.25,bty="n")
 
