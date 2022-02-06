@@ -238,20 +238,20 @@ c(
 ),
 
  sliderInput("StudentAges", "If excluding student age data points from model fit, student ages",
-                min = 17, max = 23, value = c(18, 20),step=1
+                min = 17, max = 23, value = c(19, 20),step=1
 ),
 
  selectInput("RetirementFunction", "Include retirement function in model?",
 c(
-"No"="NO",
-"Yes"="YES"
+"Yes"="YES",
+"No"="NO"
 ),
 ),
 
  selectInput("ElderlyFunction", "Include Wilson's post-retirement function in model?",
 c(
-"No"="NO",
-"Yes"="YES"
+"Yes"="YES",
+"No"="NO"
 ),
 ),
 
@@ -283,7 +283,8 @@ hr(),
 
 tags$small(paste0(        
 	"Some notes: Rogers-Castro migration model fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
-	R's approx() function is used for missing data applied in the Rogers-Castro model."
+	R's approx() function is used for missing data applied in the Rogers-Castro model. 
+	The student adjustment here is just by subtraction from excluded student age data points."
 	)),
 hr(),
 
@@ -476,7 +477,7 @@ migprob<-migprob$y
 
 #NUMBER OF TRIES - USED FOR FITTING
 TRIES<-input$SampleSize
-if(TRIES>5000) {TRIES<-5000}
+if(TRIES>10000) {TRIES<-10000}
 
 #TO APPROXIMATELY EXCLUDE SOME FEATURES
 approxexclude<-c(0,1e-10)
@@ -868,12 +869,12 @@ squaredsumoffullmodelresiduals<-sum((step7-step1)^2) #squaredsumoffullmodelresid
 ##############################
 
 ##PLOT ACCUMULATED FIT
-if(input$ExcludeStudentAges=="YES") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25,pch=1,panel.first=c(abline(v=c(input$StudentAges[1],input$StudentAges[2]),col=1,lty=3)))}
+if(input$ExcludeStudentAges=="YES") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25,pch=1,panel.first=c(abline(v=c(99,100),col=1,lty=3)))}
 if(input$ExcludeStudentAges=="NO") {plot(step1,xlab="Age",ylab="Migration Rate (proportional, data and fit sum to 1)",ylim=c(-.005,.035),cex.axis=1.25,cex.lab=1.25)}
 lines(step6,col="black",lwd=3) #lines(step7,col="black",lwd=3)
 
 ##PLOT INDIVIDUAL STEP FITTING
-lines(step7-step6,col="grey",lwd=2,lty=2)
+lines(step7-step6,col="dark grey",lwd=2,lty=2)
 lines(step6-step5,col="orange",lwd=2,lty=2)
 lines(step5-step4,col="purple",lwd=2,lty=2)
 lines(step4-step3,col="green",lwd=2,lty=2)
@@ -885,7 +886,7 @@ lines(step7-step1,col="dark grey") #lines(step7-step1,col="dark grey")
 
 legend(MaxAge*.42,.035, 
 legend=c("Scaled data", "Full fitted model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve (flat if excluded)", "Wilson's post-retirement curve (flat if excluded)", "Student adjustment (flat if no adjustment)", "Full fitted model residuals"), 
-col=c("black", "black", "red", "blue", "green", "purple", "orange", "grey", "grey"), 
+col=c("black", "black", "red", "blue", "green", "purple", "orange", "dark grey", "dark grey"), 
 lwd=c(1,2,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA,NA), cex=1.25)
 
 plot.new()
