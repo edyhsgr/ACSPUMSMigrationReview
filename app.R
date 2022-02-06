@@ -352,8 +352,7 @@ agg_inmigdata<-aggregate(InMigData$SumOfPERWT, by=list(InMigData$AGE), FUN=sum)
 agg_inmigdata<-merge(agelist,agg_inmigdata,by="Group.1",all.x=TRUE)
 agg_popdata<-aggregate(PopData$SumOfPERWT, by=list(PopData$AGE), FUN=sum)
 agg_popdata<-merge(agelist,agg_popdata,by="Group.1",all.x=TRUE)
-if(input$ExcludeStudentAges=="YES") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
-if(input$ExcludeStudentAges=="NO") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
+plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)
 lines(agg_inmigdata$x[0:MaxAge],type="l",col=2)
 
 if (input$Sex=="0") {
@@ -371,7 +370,6 @@ if (input$Sex!="0") {
 agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
 agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
 lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
-
 legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
 
 if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
@@ -379,7 +377,6 @@ if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
 
 plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.25),cex.axis=1.25,cex.lab=1.25)
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
-
 legend(MaxAge*.65, .24, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
 }
 
@@ -433,8 +430,7 @@ agg_inmigdata<-aggregate(InMigData$SumOfPERWT, by=list(InMigData$AGE), FUN=sum)
 agg_inmigdata<-merge(agelist,agg_inmigdata,by="Group.1",all.x=TRUE)
 agg_popdata<-aggregate(PopData$SumOfPERWT, by=list(PopData$AGE), FUN=sum)
 agg_popdata<-merge(agelist,agg_popdata,by="Group.1",all.x=TRUE)
-if(input$ExcludeStudentAges=="YES") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
-if(input$ExcludeStudentAges=="NO") {plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)}
+plot(agg_popdata$x[0:MaxAge],type="l",ylim=c(0,max(agg_popdata$x*1.1,na.rm=TRUE)),xlab="Age",ylab="",cex.axis=1.25,cex.lab=1.25)
 lines(agg_inmigdata$x[0:MaxAge],type="l",col=2)
 
 if (input$Sex=="0") {
@@ -452,7 +448,6 @@ if (input$Sex!="0") {
 agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
 agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
 lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
-
 legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
 
 if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
@@ -460,7 +455,6 @@ if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
 
 plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.5),cex.axis=1.25,cex.lab=1.25)
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
-
 legend(MaxAge*.65, .48, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
 }
 
