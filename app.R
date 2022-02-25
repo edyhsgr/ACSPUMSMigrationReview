@@ -11,7 +11,7 @@
 ##Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
 ##R's approx() function is used for missing data applied in the Rogers-Castro model.
 ##
-##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated January 2022). 
+##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated February 2022). 
 ##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
 ##Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
 ##
@@ -255,6 +255,14 @@ c(
 ),
 ),
 
+ selectInput("RetirementElderlyCombine", "Fit retirement and post-retirement functions together (combined age range)?",
+c(
+"Yes"="YES",
+"No"="NO"
+),
+),
+
+
 hr(),
 
  sliderInput("ChildhoodAges", "Rogers-Castro childhood function data range (ages)",
@@ -370,14 +378,14 @@ if (input$Sex!="0") {
 agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
 agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
 lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
-legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
+legend(MaxAge*.65, max(agg_popdata$x*1.1,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
 
 if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
 if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
 
 plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.25),cex.axis=1.25,cex.lab=1.25)
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
-legend(MaxAge*.65, .24, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
+legend(MaxAge*.725, .25, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
 }
 
 ##########
@@ -448,14 +456,14 @@ if (input$Sex!="0") {
 agg_outmigdata<-aggregate(OutMigData$SumOfPERWT, by=list(OutMigData$AGE), FUN=sum)
 agg_outmigdata<-merge(agelist,agg_outmigdata,by="Group.1",all.x=TRUE)
 lines(agg_outmigdata$x[0:MaxAge],type="l",col=4)
-legend(MaxAge*.65, max(agg_popdata$x*1.05,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
+legend(MaxAge*.65, max(agg_popdata$x*1.1,na.rm=TRUE), legend=c("Population", "In-movers", "Out-movers (domestic)"), col=c("black", "red", "blue"), lty=1, cex=1.25)
 
 if (input$InOrOut=="IN") {agg_migrate<-agg_inmigdata$x/agg_popdata$x}
 if (input$InOrOut=="OUT") {agg_migrate<-agg_outmigdata$x/agg_popdata$x}
 
 plot(agg_inmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],type="l",col=2,xlab="Age",ylab="Migration Rate",ylim=c(0,.5),cex.axis=1.25,cex.lab=1.25)
 lines(agg_outmigdata$x[0:MaxAge]/agg_popdata$x[0:MaxAge],col=4)
-legend(MaxAge*.65, .48, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
+legend(MaxAge*.725, .5, legend=c("In", "Out (domestic)"), col=c("red", "blue"), lty=1, cex=1.25)
 }
 
 #####
@@ -703,6 +711,7 @@ step4best[1:SIZE]<-step4repeatpass$labparam1tries[1]*exp(-step4repeatpass$labpar
 #step4best[1:SIZE]<-round(step4repeatpass$labparam1tries[1],3)*exp(round(-step4repeatpass$labparam2tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))-exp(round(-step4repeatpass$labparam4tries[1],3)*(meanages[]-round(step4repeatpass$labparam3tries[1],3))))
 step4<-step3+step4best
 
+if(input$RetirementElderlyCombine=="NO") {
 ##STEP 5 FIT - SELECT BEST PERCENT PARAMETER VALUES OF TRIES BASED ON INPUT DISTRIBUTIONS, THEN REPEAT TRIES WITH THE UNIFORM BOUNDS OF BEST PERCENT UNTIL CONVERGENCE   
 step5triesfit<-function(retparam1tries,retparam2tries,retparam3tries){
 step5tries<-array(step1-step2,dim=c(length(step1),TRIES))
@@ -766,8 +775,9 @@ ITER
 step6best<-array(step1-step5,dim=c(length(step1)))
 step6best[1:SIZE]<-step6repeatpass$eldparam1tries[1]*exp(-((meanages[]-step6repeatpass$eldparam3tries[1])/step6repeatpass$eldparam2tries[1])*((meanages[]-step6repeatpass$eldparam3tries[1])/step6repeatpass$eldparam2tries[1]))
 step6<-step5+step6best
+}
 
-if(input$RetirementFunction=="YES" & input$ElderlyFunction=="YES") {
+if(input$RetirementElderlyCombine=="YES") {
 ##STEP 5 FIT - SELECT BEST PERCENT PARAMETER VALUES OF TRIES BASED ON INPUT DISTRIBUTIONS, THEN REPEAT TRIES WITH THE UNIFORM BOUNDS OF BEST PERCENT UNTIL CONVERGENCE   
 step5triesfit<-function(retparam1tries,retparam2tries,retparam3tries,eldparam1tries,eldparam2tries,eldparam3tries){
 step5tries<-array(step1-step2,dim=c(length(step1),TRIES))
@@ -878,7 +888,7 @@ lines(step2,col="red",lwd=2,lty=2)
 ##PLOT RESIDUALS
 lines(step7-step1,col="dark grey") #lines(step7-step1,col="dark grey")
 
-legend(MaxAge*.42,.035, 
+legend(MaxAge*.395,.035, 
 legend=c("Scaled data", "Full fitted model curve", "Level", "Childhood curve", "Labor force curve", "Retirement curve (flat if excluded)", "Wilson's post-retirement curve (flat if excluded)", "Student adjustment (flat if no adjustment)", "Full fitted model residuals"), 
 col=c("black", "black", "red", "blue", "green", "purple", "orange", "dark grey", "dark grey"), 
 lwd=c(1,2,2,2,2,2,2,2,1), lty=c(NA,1,2,2,2,2,2,2,1), pch=c(1,NA,NA,NA,NA,NA,NA,NA,NA), cex=1.25)
@@ -921,5 +931,4 @@ legend("left",
 }
 
 shinyApp(ui = ui, server = server)
-
 
