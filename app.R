@@ -198,7 +198,7 @@ c(
 ),
 ),
 
- selectInput("Hispanic", "Hispanic origin",
+ selectInput("Hispanic", "Hispanic origin grouping",
 c(
 "Total"="0",
 "Hispanic"="1",
