@@ -1,12 +1,12 @@
 ACS PUMS MIGRATION REVIEW - US STATES AND CALIFORNIA COUNTIES 
-EDDIE HUNSINGER, OCTOBER 2019 (UPDATED JANUARY 2022) (CONTACT: edyhsgr.github.io; edyhsgr@gmailcom)
+EDDIE HUNSINGER, OCTOBER 2019 (UPDATED JULY 2025) (CONTACT: edyhsgr.github.io; edyhsgr@protonmailcom)
 DATA: US CENSUS BUREAU 2013 TO 2017 AMERICAN COMMUNITY SURVEY (ACS), PUBLIC USE MICRODATA SAMPLE (PUMS) FROM IPUMS-USA (via ipums.org in September 2019), UNIVERSITY OF MINNESOTA.
 
 The Rogers-Castro fitting process used, references, and more information: https://applieddemogtoolbox.github.io/#MMSRCode by Eddie Hunsinger, August 2018 (updated July 2020). 
 
 Some notes: R's approx() function is used for missing data applied in the Rogers-Castro model. 
-The file with data for US States (not including counties) (38MB) is too large to post here, but posted at: 
-https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_States.csv
+The file with data for US States (not including counties) (38MB) is too large to post as a single file here, so split into two: 
+ACSPUMSSelection_2017FiveYearViaIPUMS_States_1.csv and ACSPUMSSelection_2017FiveYearViaIPUMS_States_2.csv
 
 Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
 
