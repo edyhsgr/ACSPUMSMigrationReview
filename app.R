@@ -2,16 +2,16 @@
 ##############################################################################################################################
 ##R CODE FOR ACS PUMS MIGRATION REVIEW - US STATES AND CALIFORNIA COUNTIES
 ##
-##EDDIE HUNSINGER, OCTOBER 2019 (UPDATED FEBRUARY 2022)
+##EDDIE HUNSINGER, OCTOBER 2019 (UPDATED JULY 2025)
 ##https://edyhsgr.github.io/eddieh/
-##edyhsgr@gmail.com
+##edyhsgr@protonmail.com
 ##
 ##US Census Bureau 2013 to 2017 American Community Survey (ACS) Public Use Microdata Sample (PUMS) data from IPUMS-USA, University of Minnesota, www.ipums.org.
 ##
 ##Some notes: Rogers-Castro fits for these data are just for demonstration, and not intended to be informative about migration for the respective populations. 
 ##R's approx() function is used for missing data applied in the Rogers-Castro model.
 ##
-##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated February 2022). 
+##This interface was made with Shiny for R (shiny.rstudio.com). Eddie Hunsinger, September 2019 (updated July 2025). 
 ##GitHub repository: https://github.com/edyhsgr/ACSPUMSMigrationReview. 
 ##Rogers-Castro fitting process used: https://applieddemogtoolbox.github.io/#MMSRCode.
 ##
@@ -314,8 +314,9 @@ mainPanel(
 ))
 )
 
-DataStates<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_States.csv",header=TRUE,sep=","))
-DataCACounties<-data.frame(read.table(file="https://u.demog.berkeley.edu/~eddieh/ACSPUMSMigrationReview/USACSMigration/Data/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
+DataStates_1<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/refs/heads/master/ACSPUMSSelection_2017FiveYearViaIPUMS_States_1.csv",header=TRUE,sep=","))
+DataStates_2<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/refs/heads/master/ACSPUMSSelection_2017FiveYearViaIPUMS_States_2.csv",header=TRUE,sep=","))
+DataCACounties<-data.frame(read.table(file="https://raw.githubusercontent.com/edyhsgr/ACSPUMSMigrationReview/refs/heads/master/ACSPUMSSelection_2017FiveYearViaIPUMS_CA.csv",header=TRUE,sep=","))
 
 server<-function(input, output) {	
 	output$plots<-renderPlot({
@@ -334,7 +335,7 @@ names(agelist)<-"Group.1"
 ##IF US STATES
 ##########
 if(input$radio==1) {
-Data<-DataStates
+Data<-rbind(DataStates_1,DataStates_2)
 
 if (input$Sex=="0") {
 	if (input$Hispanic=="0") {PopData<-subset(Data, STATEFIP==input$State)}
