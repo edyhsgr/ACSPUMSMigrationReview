@@ -8,6 +8,6 @@ Some notes: R's approx() function is used for missing data applied in the Rogers
 The file with data for US States (not including counties) (38MB) is too large to post as a single file here, so split into two: 
 ACSPUMSSelection_2017FiveYearViaIPUMS_States_1.csv and ACSPUMSSelection_2017FiveYearViaIPUMS_States_2.csv
 
-Shiny for R app: http://shiny.demog.berkeley.edu/eddieh/ACSPUMSMigrationReview/ 
+Shiny for R app: https://edyhsgr.shinyapps.io/ACSPUMSMigrationReview/ 
 
 This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 International License. More information: https://creativecommons.org/licenses/by-sa/3.0/? 
